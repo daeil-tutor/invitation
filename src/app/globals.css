@@ -1,19 +1,135 @@
+/* 글꼴 — Pretendard (CDN). 반드시 다른 @import보다 위에 있어야 한다 */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
 @import "tailwindcss";
 @source not "../../.claude";
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@theme {
+  /* 글꼴 */
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system,
+    BlinkMacSystemFont, system-ui, sans-serif;
+
+  /* 간격 — Figma 숫자 = 클래스 숫자 (p-16 = 16px, gap-8 = 8px) */
+  --spacing: 1px;
+  /*
+    Figma 간격 변수 (참고용 목록, 클래스는 숫자로 사용)
+    none 0 / inline-xs 2 / inline-sm 4 / compact-detail 5 / inline-compact 6
+    inline-md 8 / control-compact 10 / stack-sm 12 / control-x 12 / guide-row 14
+    preview-body-compact 15 / stack-md 16 / preview-heading 18 / page-horizontal 20
+    stack-lg 24 / preview-title 25 / preview-display 26 / stack-xl 28 / section 32
+    section-lg 40 / guide-group 56 / section-xl 60 / guide-inset 64
+    cover-inset 80 / guide-section 120
+  */
+
+  /* 색상 — Figma 변수 (기본 배경·글자색) */
+  --color-background: var(--color-surface-default);
+  --color-foreground: var(--color-text-primary);
+
+  /* 색상 — 글자 */
+  --color-text-primary: #131313;
+  --color-text-secondary: #6b7280;
+  --color-text-tertiary: #66707a;
+  --color-text-strong: #000000;
+  --color-text-disabled: #a0a2a3;
+  --color-text-inverse: #ffffff;
+
+  /* 색상 — 면(배경) */
+  --color-surface-default: #ffffff;
+  --color-surface-subtle: #f3f4f6;
+  --color-surface-inverse: #1f2937;
+  --color-background-subtle: #f9fafb;
+
+  /* 색상 — 테두리 */
+  --color-border-default: #e5e7eb;
+  --color-border-subtle: #e7e7e8;
+  --color-border-accent: #1f3dbc;
+  --color-border-on-dark: #ffffff33;
+
+  /* 색상 — 버튼(액션) */
+  --color-action-primary: #536dfe;
+  --color-action-secondary: #297eff;
+  --color-action-hover-overlay: #1f3dbcb2;
+
+  /* 색상 — 안내·피드백 */
+  --color-info-soft: #74aafb;
+  --color-info-subtle: #dceafe;
+  --color-info-strong: #00378a;
+  --color-feedback-error: #d90000;
+
+  /* 색상 — 미리보기 */
+  --color-preview-neutral-800: #5e5e5e;
+
+  /* 색상 — 초대장 커버 그라데이션 */
+  --color-cover-gradient-preserved-3: #050510;
+  --color-cover-gradient-preserved-4: #656f79;
+
+  /* 색상 — 가이드(Figma 문서 화면용) */
+  --color-guide-text-preserved-1: #131313;
+  --color-guide-text-preserved-6: #d90000;
+  --color-guide-text-preserved-7: #6b7380;
+  --color-guide-text-preserved-9: #111827;
+  --color-guide-text-preserved-12: #6b7380;
+  --color-guide-surface-preserved-8: #e5e8ed;
+  --color-guide-surface-preserved-10: #f6f7fa;
+  --color-guide-surface-preserved-13: #e8edff;
+  --color-guide-border-preserved-11: #e5e8ed;
+
+  /* 모서리 둥글기 — Figma 변수 */
+  --radius-none: 0px;
+  --radius-button: 6px;
+  --radius-control: 8px;
+  --radius-guide-chip: 10px;
+  --radius-media: 12px;
+  --radius-scaled-media-16-799999237060547: 16.799999237060547px;
+  --radius-guide-panel: 16px;
+  --radius-card: 20px;
+  --radius-guide-card: 24px;
+  --radius-cover: 32px;
+  --radius-pill: 999px;
+
+  /* 텍스트 스타일 — Figma 텍스트 스타일 (크기 / 행간 / 굵기) */
+  --text-display-lg: 26px;
+  --text-display-lg--line-height: 1.4;
+  --text-display-lg--font-weight: 800;
+
+  --text-title-lg: 25px;
+  --text-title-lg--line-height: 1.4;
+  --text-title-lg--font-weight: 600;
+
+  --text-heading-lg: 20px;
+  --text-heading-lg--line-height: 1.4;
+  --text-heading-lg--font-weight: 700;
+
+  --text-heading-md: 18px;
+  --text-heading-md--line-height: 1.4;
+  --text-heading-md--font-weight: 600;
+
+  --text-body-lg: 16px;
+  --text-body-lg--line-height: 1.5;
+  --text-body-lg--font-weight: 400;
+
+  --text-body-compact: 15px;
+  --text-body-compact--line-height: 1.5;
+  --text-body-compact--font-weight: 400;
+
+  --text-body-md: 14px;
+  --text-body-md--line-height: 1.5;
+  --text-body-md--font-weight: 400;
+
+  --text-label-lg: 16px;
+  --text-label-lg--line-height: 1.4;
+  --text-label-lg--font-weight: 600;
+
+  --text-label-md: 14px;
+  --text-label-md--line-height: 1.4;
+  --text-label-md--font-weight: 500;
+
+  --text-caption-md: 12px;
+  --text-caption-md--line-height: 1.5;
+  --text-caption-md--font-weight: 400;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
 }

@@ -1,0 +1,1 @@
+- [Token & asset rules](feedback_tokens_and_assets.md) — add missing Figma-variable tokens by name, leave raw values blank, icons = inline SVG Icon.tsx, Image PNGs in public/images
