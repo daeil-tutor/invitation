@@ -2,16 +2,16 @@ import { notFound } from "next/navigation";
 import Image from "@/components/Image";
 import InfoRow from "@/components/InfoRow";
 import InvitationCover from "@/components/InvitationCover";
-import { formatDate, getInvitation } from "@/lib/invitations";
-import { mockInvitation } from "@/lib/mock";
+import { PLACEHOLDER_ID, getInvitation } from "@/lib/data";
+import { formatDate } from "@/lib/invitations";
 import RSVPSection from "./RSVPSection";
 
 // /i/[id] — 게스트가 초대장을 보고 참석 여부를 보내는 화면 (Figma 프레임 2168:923)
 
 // 빌드할 때 미리 만들어 둘 초대장 id (cacheComponents 사용 시 최소 1개 필요)
-// TODO: Supabase — 연결 후에는 대표 초대장 id 하나만 돌려줘도 된다.
+// 실제 초대장은 처음 열릴 때 만들어진다. 여기서는 자리표시용 id 하나만 돌려준다.
 export function generateStaticParams() {
-  return [{ id: mockInvitation.id }];
+  return [{ id: PLACEHOLDER_ID }];
 }
 
 export default async function InvitationPage({ params }: PageProps<"/i/[id]">) {

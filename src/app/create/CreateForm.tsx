@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { DEMO_ID } from "@/lib/invitations";
-import type { Invitation } from "@/lib/mock";
+import { formatDate, toKoreanIso, type Invitation } from "@/lib/invitations";
+import { publishInvitation } from "./actions";
 import Button from "@/components/Button";
 import CopyLinkField from "@/components/CopyLinkField";
 import Image from "@/components/Image";
@@ -18,7 +18,8 @@ import Textarea from "@/components/Textarea";
 // /create 화면 (Figma 프레임 2168:886 만들기, 2168:910 발행 완료)
 // 입력값을 기억해야 해서 클라이언트 컴포넌트("use client")로 만들었다.
 
-// 입력하는 4가지 값 (필드 이름은 lib/mock.ts의 Invitation과 같다)
+// 입력하는 4가지 값 (필드 이름은 lib/invitations.ts의 Invitation과 같다)
+// date는 날짜·시간 선택칸 값 그대로(2026-12-20T19:00). 저장할 때 한국 시간으로 바꾼다.
 type Draft = Pick<Invitation, "title" | "date" | "location" | "body">;
 
 const emptyDraft: Draft = { title: "", date: "", location: "", body: "" };
@@ -27,6 +28,8 @@ export default function CreateForm() {
   const [draft, setDraft] = useState<Draft>(emptyDraft);
   // 발행하면 초대장 id가 생긴다. id가 있으면 발행 완료 화면을 보여준다.
   const [publishedId, setPublishedId] = useState<string | null>(null);
+  const [pending, setPending] = useState(false); // 저장 중이면 버튼을 막는다
+  const [error, setError] = useState<string | null>(null);
 
   // 입력칸 하나가 바뀌면 그 값만 바꾼다
   function update(field: keyof Draft, value: string) {
@@ -36,11 +39,21 @@ export default function CreateForm() {
   // 네 칸 모두 필수. 하나라도 비어 있으면 발행 버튼을 누를 수 없다
   const canPublish = Object.values(draft).every((value) => value.trim() !== "");
 
-  function handlePublish() {
-    if (!canPublish) return;
-    // 지금은 저장하지 않고 화면 흐름만 잇기 위해 가짜 초대장(demo)으로 연결한다.
-    // TODO: Supabase에 저장하고, 저장한 초대장의 id(crypto.randomUUID())를 쓴다
-    setPublishedId(DEMO_ID);
+  // 미리보기에 보여줄 일시 ("2026년 12월 20일 (일) 19:00")
+  const previewDate = draft.date ? formatDate(toKoreanIso(draft.date)) : "";
+
+  // Supabase에 저장하고, 저장한 초대장의 id로 발행 완료 화면을 보여준다
+  async function handlePublish() {
+    if (!canPublish || pending) return;
+    setPending(true);
+    setError(null);
+    const result = await publishInvitation(draft);
+    setPending(false);
+    if (result.ok) {
+      setPublishedId(result.id);
+    } else {
+      setError(result.error);
+    }
   }
 
   if (publishedId) {
@@ -72,7 +85,7 @@ export default function CreateForm() {
           <Input
             label="일시"
             required
-            placeholder="예) 2026년 11월 14일 (토) 09:00"
+            type="datetime-local"
             value={draft.date}
             onChange={(event) => update("date", event.target.value)}
           />
@@ -101,7 +114,7 @@ export default function CreateForm() {
           <div className="h-489 w-full overflow-y-auto rounded-control border border-border-subtle bg-surface-default">
             <InvitationCover
               title={draft.title}
-              date={draft.date}
+              date={previewDate}
               location={draft.location}
               imageAlt="초대장 대표 그림"
             />
@@ -117,7 +130,7 @@ export default function CreateForm() {
             {/* 일시·장소 카드 */}
             <div className="w-full px-20 pt-24 pb-40">
               <div className="flex w-full flex-col items-start gap-10 overflow-hidden rounded-card bg-surface-subtle p-20">
-                <InfoRow label="일시" value={draft.date} />
+                <InfoRow label="일시" value={previewDate} />
                 <InfoRow label="장소" value={draft.location} />
               </div>
             </div>
@@ -129,9 +142,14 @@ export default function CreateForm() {
       </div>
 
       {/* 화면 아래에 고정된 발행 버튼 */}
-      <div className="fixed inset-x-0 bottom-0 mx-auto flex w-full max-w-375 justify-center bg-surface-default p-20">
-        <Button size="lg" className="w-full" disabled={!canPublish} onClick={handlePublish}>
-          발행하기
+      <div className="fixed inset-x-0 bottom-0 mx-auto flex w-full max-w-375 flex-col items-center gap-8 bg-surface-default p-20">
+        {error && (
+          <p role="alert" className="w-full text-center text-caption-md text-feedback-error">
+            {error}
+          </p>
+        )}
+        <Button size="lg" className="w-full" disabled={!canPublish || pending} onClick={handlePublish}>
+          {pending ? "발행하는 중…" : "발행하기"}
         </Button>
       </div>
     </div>

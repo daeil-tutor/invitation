@@ -1,31 +1,27 @@
-import {
-  mockInvitation,
-  mockInvitations,
-  mockResponses,
-  type Invitation,
-  type RSVPResponse,
-} from "@/lib/mock";
+// 초대장·참석 응답의 모양(타입)과 화면에서 같이 쓰는 작은 함수들.
+// 브라우저 화면에서도 불러 쓰므로 여기에는 Supabase 코드를 넣지 않는다. (DB 코드는 lib/data.ts)
+
+// 초대장: 제목 · 일시 · 장소 · 본문
+export type Invitation = {
+  id: string; // 추측하기 어려운 고유 ID (crypto.randomUUID() 형식)
+  title: string;
+  date: string; // 일시 (ISO 형식)
+  location: string; // 주소를 글자로만 표시
+  body: string;
+};
+
+// 참석 응답: 이름 · 참석 여부 · 동반 인원
+export type RSVPResponse = {
+  id: string;
+  invitationId: string; // 어느 초대장에 대한 응답인지
+  name: string;
+  status: "yes" | "no"; // yes = 참석, no = 불참
+  companions: number; // 동반 인원 (본인 제외, 불참이면 0)
+};
 
 // 참석 응답 입력 제한 (임시값 — 사용자와 정한 뒤 바꿀 수 있다)
 export const NAME_MAX = 20; // 이름 최대 글자 수
 export const COMPANIONS_MAX = 10; // 동반 인원 최대값
-
-// 개발용 별칭 — Supabase 연결 후 지울 것
-// /i/demo, /i/demo/responses 주소로 가짜 초대장을 볼 수 있게 한다.
-export const DEMO_ID = "demo";
-
-// 초대장 하나 가져오기. 없으면 null.
-// TODO: Supabase — 지금은 가짜 데이터(mock)에서 찾는다. 나중에 이 함수 안만 바꾸면 된다.
-export async function getInvitation(id: string): Promise<Invitation | null> {
-  if (id === DEMO_ID) return mockInvitation;
-  return mockInvitations.find((invitation) => invitation.id === id) ?? null;
-}
-
-// 초대장 하나에 달린 참석 응답 목록. invitationId는 초대장의 실제 id(invitation.id)를 넘긴다.
-// TODO: Supabase — 지금은 가짜 데이터(mock)에서 고른다.
-export async function getResponses(invitationId: string): Promise<RSVPResponse[]> {
-  return mockResponses.filter((response) => response.invitationId === invitationId);
-}
 
 // 응답 현황 숫자 3개
 // 참석 인원 합계 = 참석 응답마다 (본인 1명 + 동반 인원)을 더한 값. 불참은 세지 않는다.
@@ -38,8 +34,12 @@ export function summarizeResponses(responses: RSVPResponse[]) {
   };
 }
 
+// 날짜·시간 선택칸 값(2026-12-20T19:00)을 한국 시간 ISO(2026-12-20T19:00:00+09:00)로 바꾼다.
+export function toKoreanIso(localValue: string) {
+  return `${localValue}:00+09:00`;
+}
+
 // ISO 날짜(2026-12-20T19:00:00+09:00)를 "2026년 12월 20일 (일) 19:00"처럼 보여준다.
-// 임시 결정: 일시 입력 방식이 정해지면 바뀔 수 있다.
 export function formatDate(iso: string) {
   const parts = new Intl.DateTimeFormat("ko-KR", {
     timeZone: "Asia/Seoul",

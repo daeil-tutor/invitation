@@ -1,7 +1,7 @@
 "use server";
 
-import { COMPANIONS_MAX, NAME_MAX, getInvitation } from "@/lib/invitations";
-import type { RSVPResponse } from "@/lib/mock";
+import { getInvitation, insertResponse } from "@/lib/data";
+import { COMPANIONS_MAX, NAME_MAX, type RSVPResponse } from "@/lib/invitations";
 
 // 게스트가 보낸 참석 응답을 서버에서 다시 검사한다 (브라우저 검사는 우회될 수 있기 때문)
 
@@ -50,6 +50,10 @@ export async function submitRSVP(
     companions: status === "no" ? 0 : companions,
   };
 
-  // TODO: Supabase에 저장
+  try {
+    await insertResponse({ invitationId: invitation.id, ...result });
+  } catch {
+    return { ok: false, error: "저장하지 못했어요. 잠시 후 다시 시도해주세요." };
+  }
   return { ok: true, result };
 }

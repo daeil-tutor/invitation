@@ -1,23 +1,7 @@
 // 가짜 데이터 (docs/PRD.md 기준)
-// Supabase를 연결하기 전에 화면을 만들어 보고 확인하는 용도다.
+// Supabase를 연결하기 전에 화면을 만들어 보던 용도다. 지금은 화면에서 쓰지 않는다.
 
-// 초대장: 제목 · 일시 · 장소 · 본문
-export type Invitation = {
-  id: string; // 추측하기 어려운 고유 ID (crypto.randomUUID() 형식)
-  title: string;
-  date: string; // 일시 (ISO 형식, 한국 시간)
-  location: string; // 주소를 글자로만 표시
-  body: string;
-};
-
-// 참석 응답: 이름 · 참석 여부 · 동반 인원
-export type RSVPResponse = {
-  id: string;
-  invitationId: string; // 어느 초대장에 대한 응답인지
-  name: string;
-  status: "yes" | "no"; // yes = 참석, no = 불참
-  companions: number; // 동반 인원 (본인 제외, 불참이면 0)
-};
+import type { Invitation, RSVPResponse } from "@/lib/invitations";
 
 export const mockInvitation: Invitation = {
   id: "3f9c2a7e-8b41-4d6a-9e15-c0a7b2d4e861",
